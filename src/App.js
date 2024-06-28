@@ -4,19 +4,19 @@ const initialFriends = [
   {
     id: 118836,
     name: "Clark",
-    image: "https://i.pravatar.cc/48?u=118836",
+    imageURL: "https://i.pravatar.cc/48?u=118836",
     balance: -7,
   },
   {
     id: 933372,
     name: "Sarah",
-    image: "https://i.pravatar.cc/48?u=933372",
+    imageURL: "https://i.pravatar.cc/48?u=933372",
     balance: 20,
   },
   {
     id: 499476,
     name: "Anthony",
-    image: "https://i.pravatar.cc/48?u=499476",
+    imageURL: "https://i.pravatar.cc/48?u=499476",
     balance: 0,
   },
 ];
@@ -65,7 +65,7 @@ function FriendsList({ friendList }) {
 function Friend({ friend }) {
   return (
     <li>
-      <img src={friend.image} alt={friend.name} />
+      <img src={friend.imageURL} alt={friend.name} />
       <h3>{friend.name}</h3>
 
       {friend.balance < 0 ? (
@@ -87,36 +87,23 @@ function Friend({ friend }) {
 }
 
 function FormAddFriend({ handleAddFriend }) {
-  // const [friend, setFriend] = useState({
-  //   imageURL: "https://i.pravatar.cc/48",
-  // });
-
-  const [name, setName] = useState("");
-  const [imageURL, setImageURL] = useState("");
+  const [friend, setFriend] = useState({
+    imageURL: "https://i.pravatar.cc/48",
+  });
 
   function handleSubmitAddFriend(e) {
     e.preventDefault();
 
-    // if (!friend.name || !friend.imageURL) return;
-
-    if (!name || !imageURL) return;
-    // const newFriend = {
-    //   ...friend,
-    //   id: crypto.randomUUID(),
-    //   balance: 0,
-    // };
-
+    if (!friend.name || !friend.imageURL) return;
     const newFriend = {
-      name: name,
-      imageURL: imageURL,
+      ...friend,
       id: crypto.randomUUID(),
       balance: 0,
     };
+
     handleAddFriend((curFriendList) => [...curFriendList, newFriend]);
 
-    // setFriend({ name: "", imageURL: "" });
-    setName("");
-    setImageURL("");
+    setFriend({ name: "", imageURL: "https://i.pravatar.cc/48" });
   }
 
   return (
@@ -128,16 +115,24 @@ function FormAddFriend({ handleAddFriend }) {
       <input
         type="text"
         id="name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        value={friend.name}
+        onChange={(e) =>
+          setFriend((curFriend) => {
+            return { ...curFriend, name: e.target.value };
+          })
+        }
       ></input>
 
       <label htmlFor="imageURL">🧑‍🤝‍🧑Image URL</label>
       <input
         type="text"
         id="imageURL"
-        value={imageURL}
-        onChange={(e) => setImageURL(e.target.value)}
+        value={friend.imageURL}
+        onChange={(e) =>
+          setFriend((curFriend) => {
+            return { ...curFriend, imageURL: e.target.value };
+          })
+        }
       ></input>
 
       <Button>Add</Button>
