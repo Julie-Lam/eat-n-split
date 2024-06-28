@@ -30,14 +30,19 @@ function Button({ children, handleOnClick }) {
 }
 
 export default function App() {
-  const [formAddFriendIsOpen, setFormAddFriendIsOpen] = useState(false);
   const [friendList, setFriendList] = useState(initialFriends);
+
+  // const [friendList, setFriendList] = useState([]);
+  const [formAddFriendIsOpen, setFormAddFriendIsOpen] = useState(false);
   return (
     <div className="app">
       <div className="sidebar">
         <FriendsList friendList={friendList} />
         {formAddFriendIsOpen && (
-          <FormAddFriend handleAddFriend={setFriendList} />
+          <FormAddFriend
+            handleAddFriend={setFriendList}
+            handleToggleDisplayAddFriendForm={setFormAddFriendIsOpen}
+          />
         )}
 
         <Button handleOnClick={() => setFormAddFriendIsOpen((o) => !o)}>
@@ -86,8 +91,9 @@ function Friend({ friend }) {
   );
 }
 
-function FormAddFriend({ handleAddFriend }) {
+function FormAddFriend({ handleAddFriend, handleToggleDisplayAddFriendForm }) {
   const [friend, setFriend] = useState({
+    name: "",
     imageURL: "https://i.pravatar.cc/48",
   });
 
@@ -102,6 +108,7 @@ function FormAddFriend({ handleAddFriend }) {
     };
 
     handleAddFriend((curFriendList) => [...curFriendList, newFriend]);
+    handleToggleDisplayAddFriendForm(false);
 
     setFriend({ name: "", imageURL: "https://i.pravatar.cc/48" });
   }
