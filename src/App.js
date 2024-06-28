@@ -56,7 +56,13 @@ export default function App() {
         </Button>
       </div>
 
-      {selectedFriend && <FormSplitBill friend={selectedFriend} />}
+      {selectedFriend && (
+        <FormSplitBill
+          selFriend={selectedFriend}
+          handleSetFriendList={setFriendList}
+          handleSetSelectedFriend={setSelectedFriend}
+        />
+      )}
     </div>
   );
 }
@@ -91,7 +97,6 @@ function Friend({
   handleToggleAddFriendIsOpen,
 }) {
   const isSelected = selectedFriend?.id === friend.id;
-  console.log(isSelected);
 
   function handleOnClick() {
     handleSetSelectedFriend((curSelFriend) =>
@@ -110,11 +115,9 @@ function Friend({
           You owe {friend.name} {Math.abs(friend.balance)}
         </p>
       ) : null}
-      {friend.balance === 0 ? (
-        <p className="green">You and {friend.name} are even</p>
-      ) : null}
+      {friend.balance === 0 ? <p>You and {friend.name} are even</p> : null}
       {friend.balance > 0 ? (
-        <p>
+        <p className="green">
           {friend.name} owes you ${friend.balance}
         </p>
       ) : null}
@@ -181,24 +184,70 @@ function FormAddFriend({ handleAddFriend, handleToggleDisplayAddFriendForm }) {
   );
 }
 
-function FormSplitBill({ friend }) {
+function FormSplitBill({
+  selFriend,
+  handleSetFriendList,
+  handleSetSelectedFriend,
+}) {
+  const [bill, setBill] = useState("");
+  const [paidByUser, setPaidByUser] = useState("");
+  const paidByFriend = bill - paidByUser;
+  const [whoIsPaying, setWhoIsPaying] = useState(0);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    //When I submit the bill, I need to update the selected friend's balance
+
+    let newBalance;
+    switch (whoIsPaying) {
+      case 0:
+        newBalance = selFriend.balance + paidByFriend;
+        break;
+      case 1:
+        newBalance = selFriend.balance - paidByFriend;
+        break;
+      default:
+        return;
+    }
+
+    //find the one that matches on the friend list, and update
+    handleSetFriendList((curFriendList) =>
+      curFriendList.map((f) =>
+        f.id === selFriend.id ? { ...selFriend, balance: newBalance } : f
+      )
+    );
+
+    handleSetSelectedFriend(null);
+  }
+
   return (
-    <form className="form-split-bill">
-      <h2>Split a bill with {friend.name}</h2>
+    <form className="form-split-bill" onSubmit={handleSubmit}>
+      <h2>Split a bill with {selFriend.name}</h2>
 
       <label>💸Bill value</label>
-      <input type="text"></input>
+      <input
+        type="Number"
+        value={bill}
+        onChange={(e) => setBill(Number(e.target.value))}
+      ></input>
 
       <label>🫵Your expenses</label>
-      <input type="text"></input>
+      <input
+        type="Number"
+        value={paidByUser}
+        onChange={(e) => setPaidByUser(Number(e.target.value))}
+      ></input>
 
-      <label>🧑‍🤝‍🧑{friend.name}'s expenses</label>
-      <input type="text" disabled></input>
+      <label>🧑‍🤝‍🧑{selFriend.name}'s expenses</label>
+      <input type="Number" disabled value={paidByFriend}></input>
 
       <label>🤑Who is paying the bill?</label>
-      <select>
-        <option value="user">You</option>
-        <option value="friend">{friend.name}</option>
+      <select
+        value={whoIsPaying}
+        onChange={(e) => setWhoIsPaying(Number(e.target.value))}
+      >
+        <option value="0">You</option>
+        <option value="1">{selFriend.name}</option>
       </select>
 
       <Button>Split bill</Button>
