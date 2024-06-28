@@ -42,6 +42,7 @@ export default function App() {
           friendList={friendList}
           handleSetSelectedFriend={setSelectedFriend}
           selectedFriend={selectedFriend}
+          handleToggleAddFriendIsOpen={setFormAddFriendIsOpen}
         />
         {formAddFriendIsOpen && (
           <FormAddFriend
@@ -60,7 +61,12 @@ export default function App() {
   );
 }
 
-function FriendsList({ friendList, handleSetSelectedFriend, selectedFriend }) {
+function FriendsList({
+  friendList,
+  handleSetSelectedFriend,
+  selectedFriend,
+  handleToggleAddFriendIsOpen,
+}) {
   const friends = friendList;
 
   return (
@@ -71,13 +77,19 @@ function FriendsList({ friendList, handleSetSelectedFriend, selectedFriend }) {
           key={f.id}
           handleSetSelectedFriend={handleSetSelectedFriend}
           selectedFriend={selectedFriend}
+          handleToggleAddFriendIsOpen={handleToggleAddFriendIsOpen}
         />
       ))}
     </ul>
   );
 }
 
-function Friend({ friend, handleSetSelectedFriend, selectedFriend }) {
+function Friend({
+  friend,
+  handleSetSelectedFriend,
+  selectedFriend,
+  handleToggleAddFriendIsOpen,
+}) {
   const isSelected = selectedFriend?.id === friend.id;
   console.log(isSelected);
 
@@ -85,6 +97,8 @@ function Friend({ friend, handleSetSelectedFriend, selectedFriend }) {
     handleSetSelectedFriend((curSelFriend) =>
       curSelFriend?.id === friend.id ? null : friend
     );
+
+    handleToggleAddFriendIsOpen(false);
   }
   return (
     <li className={isSelected ? "selected" : null}>
