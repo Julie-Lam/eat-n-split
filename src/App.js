@@ -78,7 +78,14 @@ function FriendsList({ friendList, handleSetSelectedFriend, selectedFriend }) {
 }
 
 function Friend({ friend, handleSetSelectedFriend, selectedFriend }) {
-  const isSelected = selectedFriend != null && selectedFriend.id === friend.id;
+  const isSelected = selectedFriend?.id === friend.id;
+  console.log(isSelected);
+
+  function handleOnClick() {
+    handleSetSelectedFriend((curSelFriend) =>
+      curSelFriend?.id === friend.id ? null : friend
+    );
+  }
   return (
     <li className={isSelected ? "selected" : null}>
       <img src={friend.imageURL} alt={friend.name} />
@@ -97,8 +104,8 @@ function Friend({ friend, handleSetSelectedFriend, selectedFriend }) {
           {friend.name} owes you ${friend.balance}
         </p>
       ) : null}
-      <Button handleOnClick={() => handleSetSelectedFriend(friend)}>
-        Select
+      <Button handleOnClick={handleOnClick}>
+        {isSelected ? "Close" : "Select"}
       </Button>
     </li>
   );
